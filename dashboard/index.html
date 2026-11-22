@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Radar — pre-token protocols ranked by implied value</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div>
+      <p class="kicker">TOKEN RADAR &middot; MODEL RADAR-2</p>
+      <h1>Which pre-token protocol is worth farming next?</h1>
+      <p class="lede">Every protocol DefiLlama tracks that records no token, ranked by what its launch
+      would be worth if its record stayed as it is. The board covers the snapshot&rsquo;s whole
+      watchlist, then the early finds below the floor. Nothing here predicts whether or when a
+      token is issued: the implied value is this radar&rsquo;s own claim, never make.fun&rsquo;s.</p>
+    </div>
+    <dl class="stats" id="stats"></dl>
+  </div>
+</header>
+
+<main>
+  <section class="method" id="method" aria-label="How the value is worked out">
+    <h2>How the value is worked out</h2>
+    <p><code>implied = TVL &times; multiple &times; growth &times; maturity &times; chains</code></p>
+    <ul>
+      <li><strong>Multiple:</strong> the median <em>mcap / TVL</em> of the protocols in the same
+      category that already have a token trading (at least 4 comparables), otherwise the
+      snapshot-wide median; clamped to 0.02&ndash;1.5.</li>
+      <li><strong>Growth:</strong> <code>1 + 0.5 &times; clamp(7-day TVL change, &minus;60%, +120%) / 100</code>.</li>
+      <li><strong>Maturity:</strong> <code>0.70 + 0.30 &times; min(age, 4 years) / 4 years</code>;
+      age unknown counts as 1 year.</li>
+      <li><strong>Chains:</strong> <code>1 + 0.03</code> per extra chain, up to 5.</li>
+    </ul>
+    <p class="note">A protocol &ldquo;records no token&rdquo; when DefiLlama&rsquo;s record carries no
+    market cap, CoinGecko id or symbol for it. That is the record&rsquo;s word, not proof: a
+    protocol on the list may still have a token its record does not carry. Protocols whose token
+    already trades are kept apart in the Live section below, at the market&rsquo;s own value.</p>
+  </section>
+
+  <section class="board" aria-label="Ranked board">
+    <div class="controls">
+      <label>Search <input id="q" type="search" placeholder="name, slug or category" autocomplete="off"></label>
+      <label>Category <select id="cat"><option value="all">All categories</option></select></label>
+      <label>Scope <select id="scope">
+        <option value="all">Watchlist + early finds</option>
+        <option value="watchlist">Watchlist only</option>
+        <option value="early">Early finds only</option>
+      </select></label>
+      <label>Sort by <select id="sort">
+        <option value="implied">Implied value</option>
+        <option value="tvl">TVL</option>
+        <option value="growth">7-day growth</option>
+        <option value="age">Age</option>
+      </select></label>
+      <p class="count" id="count" aria-live="polite"></p>
+    </div>
+    <div class="table-wrap">
+      <table id="board-table">
+        <thead><tr>
+          <th data-sort="rank">#</th>
+          <th data-sort="name">Protocol</th>
+          <th data-sort="category">Category</th>
+          <th data-sort="chains">Chains</th>
+          <th data-sort="tvl" class="num">TVL</th>
+          <th data-sort="growth" class="num">7d</th>
+          <th data-sort="implied" class="num">Implied value</th>
+          <th data-sort="age" class="num">Age</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="hint">Click a row to open its detail view and farm plan. Rank is the model&rsquo;s claim;
+    the table can be re-sorted without changing it.</p>
+  </section>
+
+  <section class="detail" id="detail" aria-label="Protocol detail" hidden>
+    <h2 id="detail-title">Protocol</h2>
+    <div class="detail-grid">
+      <div>
+        <h3>Facts from the snapshot</h3>
+        <dl id="detail-facts"></dl>
+        <h3>How its value is built</h3>
+        <dl id="detail-model"></dl>
+      </div>
+      <div>
+        <h3>Farm plan</h3>
+        <ol id="detail-steps"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="live" aria-label="Protocols whose token already trades">
+    <h2>Already trading &mdash; the market&rsquo;s own values</h2>
+    <p>These protocols record a token, so they are not ranked for a launch. They are shown at
+    their market cap, as the comparables the model&rsquo;s multiples come from.</p>
+    <div class="table-wrap">
+      <table id="live-table">
+        <thead><tr><th>Protocol</th><th>Category</th><th class="num">TVL</th><th class="num">Market cap</th><th class="num">7d</th></tr></thead>
+        <tbody id="live-rows"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>Data: DefiLlama protocol snapshot, sealed <span id="asof"></span>. Floor for the watchlist:
+  $50,000,000 TVL. Implied values are this entry&rsquo;s model, not prices and not predictions.
+  Do your own checks before moving funds; never pay anyone to claim an airdrop.</p>
+</footer>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
